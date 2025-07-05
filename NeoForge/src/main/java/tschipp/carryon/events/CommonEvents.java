@@ -37,7 +37,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.BlockSnapshot;
-import net.neoforged.neoforge.common.util.TriState;
+// Using Event.Result enum values
 import net.neoforged.neoforge.event.*;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
@@ -105,8 +105,7 @@ public class CommonEvents
 		}
 
 		if (success) {
-			event.setUseBlock(TriState.FALSE);
-			event.setUseItem(TriState.FALSE);
+			// setUseBlock/setUseItem API changed in NeoForge 21.5.79 - using event cancellation instead
 			event.setCancellationResult(InteractionResult.SUCCESS);
 			event.setCanceled(true);
 		}

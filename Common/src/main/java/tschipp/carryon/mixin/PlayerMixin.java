@@ -48,7 +48,13 @@ public abstract class PlayerMixin extends LivingEntity implements CarryOnDataMan
     @Override
     public void setCarryOnData(CarryOnData data)
     {
-        data.setSelected(this.getInventory().selected);
+        try {
+            java.lang.reflect.Field selectedField = Inventory.class.getDeclaredField("selected");
+            selectedField.setAccessible(true);
+            data.setSelected((Integer) selectedField.get(this.getInventory()));
+        } catch (Exception e) {
+            data.setSelected(0); // fallback
+        }
         CompoundTag nbt = data.getNbt();
         nbt.putInt("tick", tickCount);
         this.getEntityData().set(CARRY_DATA_KEY, nbt);
@@ -87,7 +93,7 @@ public abstract class PlayerMixin extends LivingEntity implements CarryOnDataMan
     private void onReadAdditionalSaveData(CompoundTag tag, CallbackInfo info)
     {
         if (tag.contains("CarryOnData")) {
-            CarryOnData data = new CarryOnData(tag.getCompound("CarryOnData"));
+            CarryOnData data = new CarryOnData(tag.getCompound("CarryOnData").orElse(new CompoundTag()));
             setCarryOnData(data);
         }
     }

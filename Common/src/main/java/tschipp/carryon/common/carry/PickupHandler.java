@@ -162,7 +162,7 @@ public class PickupHandler {
 
         if (entity instanceof TamableAnimal tame)
         {
-            UUID owner = tame.getOwnerUUID();
+            UUID owner = tame.getOwner() != null ? tame.getOwner().getUUID() : null;
             UUID playerID = player.getGameProfile().getId();
             if (owner != null && !owner.equals(playerID))
                 return false;

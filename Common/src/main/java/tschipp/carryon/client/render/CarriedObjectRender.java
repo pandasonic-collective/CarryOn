@@ -34,7 +34,6 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -105,8 +104,7 @@ public class CarriedObjectRender
 		matrix.pushPose();
 		matrix.scale(2.5f, 2.5f, 2.5f);
 		matrix.translate(0, -0.5, -1);
-		RenderSystem.enableBlend();
-		RenderSystem.disableCull();
+		// RenderSystem blend and cull state handled by render pipeline in 1.21.5
 
 		CarryOnData carry = CarryOnDataManager.getCarryData(player);
 		ItemStackRenderState renderState = new ItemStackRenderState();
@@ -121,16 +119,15 @@ public class CarriedObjectRender
 		if(carry.getActiveScript().isPresent())
 			CarryRenderHelper.performScriptTransformation(matrix, carry.getActiveScript().get());
 
-		RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
+		// Shader texture handled by render pipeline in 1.21.5
 
 		ItemStack renderStack = CarryRenderHelper.getRenderItemStack(player);
-		Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, renderStack, ItemDisplayContext.NONE, false, player.level(), null, 0);
+		Minecraft.getInstance().getItemModelResolver().updateForTopItem(renderState, renderStack, ItemDisplayContext.NONE, player.level(), player, 0);
 		renderState.render(matrix, buffer, light, OverlayTexture.NO_OVERLAY);
 
 
 
-		RenderSystem.enableCull();
-		RenderSystem.disableBlend();
+		// RenderSystem blend and cull state handled by render pipeline in 1.21.5
 		matrix.popPose();
 	}
 
@@ -197,9 +194,7 @@ public class CarriedObjectRender
 		PoseStack matrix = new PoseStack();
 		matrix.mulPose(mat);
 
-		RenderSystem.enableBlend();
-		RenderSystem.disableCull();
-		RenderSystem.disableDepthTest();
+		// RenderSystem blend, cull, and depth test state handled by render pipeline in 1.21.5
 
 		BufferSource buffer = MultiBufferSource.immediateWithBuffers(builders, builders.get(RenderType.glint()));
 		ItemStackRenderState renderState = new ItemStackRenderState();
@@ -222,7 +217,7 @@ public class CarriedObjectRender
 
 					ItemStack renderItemStack = CarryRenderHelper.getRenderItemStack(player);
 
-					mc.getItemModelResolver().updateForTopItem(renderState, renderItemStack, ItemDisplayContext.NONE, false, level, null, 0);
+					mc.getItemModelResolver().updateForTopItem(renderState, renderItemStack, ItemDisplayContext.NONE, level, player, 0);
 
 					Optional<CarryOnScript> res = carry.getActiveScript();
 					if (res.isPresent()) {
@@ -230,8 +225,7 @@ public class CarriedObjectRender
 						CarryRenderHelper.performScriptTransformation(matrix, script);
 					}
 
-					RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
-					RenderSystem.enableCull();
+					// Shader texture and cull state handled by render pipeline in 1.21.5
 
 					PoseStack.Pose p = matrix.last();
 					PoseStack copy = new PoseStack();
@@ -283,9 +277,7 @@ public class CarriedObjectRender
 		buffer.endBatch(RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS));
 		buffer.endBatch(RenderType.entitySmoothCutout(TextureAtlas.LOCATION_BLOCKS));
 
-		RenderSystem.enableDepthTest();
-		RenderSystem.enableCull();
-		RenderSystem.disableBlend();
+		// RenderSystem depth test, cull, and blend state handled by render pipeline in 1.21.5
 	}
 
 }

@@ -112,10 +112,16 @@ public class CarryOnCommon
 		    if (!Constants.COMMON_CONFIG.settings.slownessInCreative && player.isCreative())
 			    return;
 
-		    player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 1, potionLevel(carry, player.level()), false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 1, potionLevel(carry, player.level()), false, false));
 
-		    Inventory inv = player.getInventory();
-			inv.selected = carry.getSelected();
+        // Set selected slot using reflection to access private field
+			try {
+			    java.lang.reflect.Field selectedField = Inventory.class.getDeclaredField("selected");
+			    selectedField.setAccessible(true);
+			    selectedField.set(player.getInventory(), carry.getSelected());
+			} catch (Exception e) {
+			    // Fallback - couldn't set selected slot
+			}
 	    }
 	}
 

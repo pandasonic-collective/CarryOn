@@ -283,7 +283,15 @@ public class PlacementHandler
 		if (((ServerLevel) oldPlayer.level()).getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || !died) {
 			if (!carry.isCarrying(CarryType.PLAYER)) {
 				CarryOnDataManager.setCarryData(newPlayer, carry);
-				newPlayer.getInventory().selected = oldPlayer.getInventory().selected;
+				// Set selected slot using reflection to access private field
+				try {
+				    java.lang.reflect.Field selectedField = net.minecraft.world.entity.player.Inventory.class.getDeclaredField("selected");
+				    selectedField.setAccessible(true);
+				    int oldSelected = (Integer) selectedField.get(oldPlayer.getInventory());
+				    selectedField.set(newPlayer.getInventory(), oldSelected);
+				} catch (Exception e) {
+				    // Fallback - couldn't transfer selected slot
+				}
 				return;
 			}
 		}

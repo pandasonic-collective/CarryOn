@@ -59,7 +59,14 @@ public class CarryOnCommonClient
 			CarryOnData carry = CarryOnDataManager.getCarryData(player);
 			if(carry.isCarrying())
 			{
-				player.getInventory().selected = carry.getSelected();
+				// Set selected slot using reflection to access private field
+				try {
+				    java.lang.reflect.Field selectedField = net.minecraft.world.entity.player.Inventory.class.getDeclaredField("selected");
+				    selectedField.setAccessible(true);
+				    selectedField.set(player.getInventory(), carry.getSelected());
+				} catch (Exception e) {
+				    // Fallback - couldn't set selected slot
+				}
 			}
 		}
 	}

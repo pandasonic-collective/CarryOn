@@ -54,14 +54,14 @@ public class CarryOnData {
     public CarryOnData(CompoundTag data)
     {
         if(data.contains("type"))
-            this.type = CarryType.valueOf(data.getString("type"));
+        this.type = CarryType.valueOf(data.getString("type").orElse("NONE"));
         else
             this.type = CarryType.INVALID;
 
         this.nbt = data;
 
         if(data.contains("keyPressed"))
-            this.keyPressed = data.getBoolean("keyPressed");
+            this.keyPressed = data.getBoolean("keyPressed").orElse(false);
 
         if(data.contains("activeScript"))
         {
@@ -70,7 +70,7 @@ public class CarryOnData {
         }
 
         if(data.contains("selected"))
-            this.selectedSlot = data.getInt("selected");
+            this.selectedSlot = data.getInt("selected").orElse(0);
 
     }
 
@@ -91,9 +91,9 @@ public class CarryOnData {
     public CompoundTag getContentNbt()
     {
         if(type == CarryType.BLOCK && nbt.contains("block"))
-            return nbt.getCompound("block");
+            return nbt.getCompound("block").orElse(new CompoundTag());
         else if(type == CarryType.ENTITY && nbt.contains("entity"))
-            return nbt.getCompound("entity");
+            return nbt.getCompound("entity").orElse(new CompoundTag());
         return null;
     }
 
@@ -119,7 +119,7 @@ public class CarryOnData {
         if(this.type != CarryType.BLOCK)
             throw new IllegalStateException("Called getBlock on data that contained " + this.type);
 
-        return NbtUtils.readBlockState(BuiltInRegistries.BLOCK, nbt.getCompound("block"));
+        return NbtUtils.readBlockState(BuiltInRegistries.BLOCK, nbt.getCompound("block").orElse(new CompoundTag()));
     }
 
     @Nullable
@@ -131,7 +131,7 @@ public class CarryOnData {
         if(!nbt.contains("tile"))
             return null;
 
-        return BlockEntity.loadStatic(pos, this.getBlock(), nbt.getCompound("tile"), lookup);
+        return BlockEntity.loadStatic(pos, this.getBlock(), nbt.getCompound("tile").orElse(new CompoundTag()), lookup);
     }
 
     public void setEntity(Entity entity)
@@ -147,7 +147,7 @@ public class CarryOnData {
         if(this.type != CarryType.ENTITY)
             throw new IllegalStateException("Called getEntity on data that contained " + this.type);
 
-        var optionalEntity = EntityType.create(nbt.getCompound("entity"), level, EntitySpawnReason.BUCKET);
+        var optionalEntity = EntityType.create(nbt.getCompound("entity").orElse(new CompoundTag()), level, EntitySpawnReason.BUCKET);
         if(optionalEntity.isPresent())
             return optionalEntity.get();
 
@@ -212,7 +212,7 @@ public class CarryOnData {
     {
         if(!this.nbt.contains("tick"))
             return -1;
-        return this.nbt.getInt("tick");
+        return this.nbt.getInt("tick").orElse(-1);
     }
 
     public enum CarryType {

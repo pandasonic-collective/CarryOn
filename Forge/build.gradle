@@ -36,7 +36,7 @@ jarJar.enable()
 build.dependsOn tasks.jarJar
 
 minecraft {
-    mappings channel: 'official', version: "1.21.4"
+    mappings channel: 'official', version: "1.21.5"
     copyIdeResources = true
     reobf = false
 

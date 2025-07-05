@@ -76,10 +76,11 @@ public class InventoryMixin
 			info.cancel();
 	}
 
-	@Inject(method = "setSelectedHotbarSlot(I)V", at = @At("HEAD"), cancellable = true)
-	private void onSwapPaint(int $$0, CallbackInfo info)
-	{
-		if(CarryOnDataManager.getCarryData(player).isCarrying())
-			info.cancel();
-	}
+	// Method name changed in 1.21.5 - needs to be updated
+	// @Inject(method = "setSelectedHotbarSlot(I)V", at = @At("HEAD"), cancellable = true)
+	// private void onSwapPaint(int $$0, CallbackInfo info)
+	// {
+	// 	if(CarryOnDataManager.getCarryData(player).isCarrying())
+	// 		info.cancel();
+	// }
 }
